@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>¿Es la Terapia de Ondas de Choque para Ti? — CVC Spine</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --sage: #6b9080;
+    --sage-light: #a4c3b2;
+    --sage-pale: #eef4f1;
+    --sage-mid: #c8ddd6;
+    --gold: #b8965a;
+    --gold-light: #d4aa72;
+    --ink: #0f1c18;
+    --ink-mid: #2d3f38;
+    --gray: #7a9490;
+    --white: #ffffff;
+    --cream: #e8f0ec;
+    --border: #dce8e2;
+  }
+  html, body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  body { display: flex; flex-direction: column; align-items: center; }
+
+  /* HEADER */
+  .site-header {
+    width: 100%;
+    background: var(--ink);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(15,28,24,0.18);
+  }
+  .header-inner {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+  .header-logo span { color: var(--gold-light); }
+  .header-tagline {
+    font-size: 0.7rem;
+    color: var(--sage-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* PROGRESS */
+  .progress-track {
+    width: 100%;
+    max-width: 560px;
+    padding: 16px 24px 0;
+    margin: 0 auto;
+  }
+  .progress-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em;
+    color: var(--gray); margin-bottom: 8px; text-transform: uppercase;
+  }
+  .progress-pill-row { display: flex; gap: 5px; }
+  .pill { flex: 1; height: 4px; border-radius: 100px; background: var(--sage-mid); transition: background 0.4s; }
+  .pill.active { background: var(--sage); }
+  .pill.done { background: var(--ink); }
+
+  /* QUIZ WRAP */
+  .quiz-wrap {
+    width: 100%;
+    max-width: 560px;
+    padding: 20px 20px 60px;
+    margin: 0 auto;
+    flex: 1;
+  }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeUp 0.28s ease; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* CARD */
+  .q-card {
+    background: rgba(238, 244, 241, 0.78);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(164, 195, 178, 0.4);
+    border-radius: 22px;
+    padding: 32px 28px 28px;
+    box-shadow: 0 20px 60px rgba(15,28,24,0.16), 0 4px 16px rgba(15,28,24,0.08);
+  }
+
+  /* QUESTION HEADER */
+  .q-header { margin-bottom: 24px; }
+  .q-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.55rem, 5vw, 1.95rem);
+    line-height: 1.15; color: var(--ink); margin-bottom: 6px;
+  }
+  .q-hint { font-size: 0.81rem; color: var(--gray); }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .option {
+    background: rgba(255,255,255,0.65);
+    border: 1.5px solid var(--border);
+    border-radius: 13px;
+    padding: 13px 15px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s, transform 0.1s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .option:active { transform: scale(0.985); }
+  .option:hover { border-color: var(--sage-light); background: rgba(238,244,241,0.9); }
+  .option.selected { border-color: var(--sage); background: var(--sage-pale); }
+  .option-icon {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .option.selected .option-icon { background: var(--sage-mid); }
+  .option-text { flex: 1; }
+  .option-label { font-size: 0.94rem; font-weight: 600; color: var(--ink); line-height: 1.2; margin-bottom: 2px; }
+  .option-sub { font-size: 0.75rem; color: var(--gray); line-height: 1.3; }
+  .option-check-indicator {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid var(--border); flex-shrink: 0;
+    transition: all 0.18s; position: relative;
+  }
+  .option.selected .option-check-indicator { background: var(--sage); border-color: var(--sage); }
+  .option.selected .option-check-indicator::after {
+    content: '✓'; position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 0.62rem; color: white; font-weight: 700;
+  }
+
+  /* BUTTON */
+  .btn-next {
+    width: 100%; margin-top: 20px;
+    padding: 16px; background: var(--ink); color: white; border: none;
+    border-radius: 13px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.97rem; font-weight: 600; letter-spacing: 0.02em;
+    cursor: pointer; transition: background 0.2s, transform 0.1s, opacity 0.2s;
+    display: block;
+  }
+  .btn-next:hover { background: var(--ink-mid); }
+  .btn-next:active { transform: scale(0.98); }
+  .btn-next:disabled { opacity: 0.25; cursor: not-allowed; }
+  .btn-next.sage { background: var(--sage); }
+  .btn-next.gold { background: var(--gold); }
+  .btn-next.gold:hover { background: var(--gold-light); }
+
+  /* HERO */
+  .hero-card {
+    background: rgba(238, 244, 241, 0.78);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(164, 195, 178, 0.4);
+    border-radius: 22px; padding: 40px 32px 32px;
+    box-shadow: 0 20px 60px rgba(15,28,24,0.16), 0 4px 16px rgba(15,28,24,0.08);
+    text-align: center;
+  }
+  .hero-eyebrow {
+    font-size: 0.67rem; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+  }
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 7vw, 2.6rem);
+    line-height: 1.12; color: var(--ink); margin-bottom: 14px;
+  }
+  .hero-title em { font-style: italic; color: var(--sage); }
+  .hero-sub { font-size: 0.95rem; color: var(--ink-mid); line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
+  .chip {
+    padding: 6px 14px; background: rgba(255,255,255,0.7); border-radius: 100px;
+    font-size: 0.78rem; font-weight: 500; color: var(--ink-mid);
+    border: 1px solid var(--border);
+  }
+
+  /* CONTACT */
+  .contact-title {
+    font-family: 'DM Serif Display', serif; font-size: 1.8rem;
+    color: var(--ink); margin-bottom: 6px; line-height: 1.15;
+  }
+  .contact-sub { font-size: 0.87rem; color: var(--gray); line-height: 1.55; margin-bottom: 22px; }
+  .field-stack { display: flex; flex-direction: column; gap: 12px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-wrap { display: flex; flex-direction: column; gap: 5px; }
+  .field-label { font-size: 0.67rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-mid); }
+  input {
+    width: 100%; padding: 13px 16px;
+    border: 1.5px solid var(--border); border-radius: 11px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.97rem;
+    color: var(--ink); background: rgba(255,255,255,0.8); outline: none;
+    transition: border-color 0.2s; -webkit-appearance: none;
+  }
+  input:focus { border-color: var(--sage); background: white; }
+  input::placeholder { color: var(--sage-light); }
+
+  /* RESULTS */
+  .result-badge {
+    display: inline-flex; align-items: center;
+    padding: 6px 18px; border-radius: 100px;
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  .badge-strong { background: #e0f0e8; color: #2d6b4a; }
+  .badge-potential { background: #fdf0e0; color: #8a5f1a; }
+  .badge-talk { background: #ececec; color: #444; }
+  .result-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.5rem, 5vw, 1.85rem);
+    line-height: 1.15; color: var(--ink); margin-bottom: 12px;
+  }
+  .result-body { font-size: 0.91rem; color: var(--ink-mid); line-height: 1.7; font-weight: 300; margin-bottom: 22px; }
+  .score-row { margin-bottom: 22px; }
+  .score-label-row { display: flex; justify-content: space-between; font-size: 0.73rem; color: var(--gray); margin-bottom: 7px; }
+  .score-track { background: var(--sage-mid); border-radius: 100px; height: 7px; overflow: hidden; }
+  .score-fill { height: 7px; border-radius: 100px; background: linear-gradient(90deg, var(--sage-light), var(--sage)); width: 0%; transition: width 1.3s cubic-bezier(0.4,0,0.2,1); }
+  .indicators { display: flex; flex-direction: column; gap: 10px; }
+  .ind-row { display: flex; align-items: flex-start; gap: 11px; }
+  .ind-dot {
+    width: 20px; height: 20px; background: var(--sage-pale); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--sage); font-size: 0.62rem; font-weight: 800; flex-shrink: 0; margin-top: 2px;
+  }
+  .ind-text { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.4; padding-top: 1px; }
+
+  /* DIVIDER + CALENDAR */
+  .section-divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray); white-space: nowrap; }
+  .cal-card { background: white; border: 1px solid var(--border); border-radius: 18px; overflow: hidden; margin-bottom: 36px; box-shadow: 0 8px 32px rgba(15,28,24,0.10); }
+  .cal-header { background: var(--ink); padding: 22px 24px; text-align: center; }
+  .cal-eyebrow { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 5px; font-weight: 700; }
+  .cal-title { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: white; margin-bottom: 4px; }
+  .cal-sub { font-size: 0.8rem; color: var(--sage-light); font-weight: 300; }
+  .cal-iframe iframe { width: 100%; min-height: 600px; border: none; display: block; }
+  .footer-note { text-align: center; font-size: 0.73rem; color: var(--gray); padding: 0 20px 48px; line-height: 1.6; }
+
+  @media (max-width: 380px) {
+    .field-row { grid-template-columns: 1fr; }
+    .q-card { padding: 24px 18px 22px; }
+    .hero-card { padding: 30px 20px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="site-header">
+  <div class="header-inner">
+    <div class="header-logo">CVC <span>Spine</span> &amp; Sport</div>
+    <div class="header-tagline">Colleyville, TX</div>
+  </div>
+</div>
+
+<!-- PROGRESS (hidden initially) -->
+<div class="progress-track" id="progressTrack" style="display:none">
+  <div class="progress-label" id="progressLabel"></div>
+  <div class="progress-pill-row" id="pillRow"></div>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz-wrap">
+
+  <!-- HERO -->
+  <div class="screen active" id="screen-hero">
+    <div class="hero-card">
+      <div class="hero-eyebrow">CVC Spine &amp; Sport · DFW</div>
+      <h1 class="hero-title">¿Las ondas de choque<br>son <em>para ti?</em></h1>
+      <p class="hero-sub">Responde 7 preguntas y descubre en menos de 2 minutos si eres candidato para este tratamiento.</p>
+      <div class="hero-chips"><div class="chip">Sin agujas</div><div class="chip">Sin cirugía</div><div class="chip">Sin tiempo de recuperación</div><div class="chip">Visita $47</div></div>
+      <button class="btn-next sage" onclick="handleBtn()">Comenzar el quiz →</button>
+    </div>
+  </div>
+
+
+  <!-- Q1 -->
+  <div class="screen" id="screen-1">
+    <div class="q-card">
+      <div class="q-header">
+        <div class="q-title">¿Dónde sientes el dolor?</div>
+      <div class="q-hint">Selecciona todos los que apliquen</div>
+      </div>
+      <div class="options" id="opts-1">
+      <div class="option" onclick="selectMulti(1,this,'Pie / Talón')">
+        <div class="option-icon">🦶</div>
+        <div class="option-text"><div class="option-label">Pie / Talón</div><div class="option-sub">Fascitis plantar, espolón calcáneo</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(1,this,'Tendón de Aquiles')">
+        <div class="option-icon">🦵</div>
+        <div class="option-text"><div class="option-label">Tendón de Aquiles</div><div class="option-sub">Dolor posterior del tobillo</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(1,this,'Hombro / Manguito Rotador')">
+        <div class="option-icon">💪</div>
+        <div class="option-text"><div class="option-label">Hombro / Manguito Rotador</div><div class="option-sub">Dolor al levantar el brazo</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(1,this,'Codo')">
+        <div class="option-icon">🎾</div>
+        <div class="option-text"><div class="option-label">Codo</div><div class="option-sub">Codo de tenista o golfista</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(1,this,'Rodilla / Cadera')">
+        <div class="option-icon">🦴</div>
+        <div class="option-text"><div class="option-label">Rodilla / Cadera</div><div class="option-sub">Dolor articular o de tejido blando</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(1,this,'Espalda / Cuello')">
+        <div class="option-icon">🔙</div>
+        <div class="option-text"><div class="option-label">Espalda / Cuello</div><div class="option-sub">Tensión muscular crónica</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(1,this,'Otro')">
+        <div class="option-icon">📍</div>
+        <div class="option-text"><div class="option-label">Otro</div><div class="option-sub">Área diferente a las anteriores</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      </div>
+      <button class="btn-next" onclick="handleBtn()" disabled id="btn-1">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="screen" id="screen-2">
+    <div class="q-card">
+      <div class="q-header">
+        <div class="q-title">¿Cuánto tiempo llevas con este dolor?</div>
+      </div>
+      <div class="options" id="opts-2">
+      <div class="option" onclick="selectSingle(2,this,'Menos de 4 semanas',0)">
+        <div class="option-icon">⚡</div>
+        <div class="option-text"><div class="option-label">Menos de 4 semanas</div><div class="option-sub">Dolor reciente o agudo</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(2,this,'1 – 3 meses',1)">
+        <div class="option-icon">📅</div>
+        <div class="option-text"><div class="option-label">1 – 3 meses</div><div class="option-sub">Comenzando a volverse persistente</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(2,this,'3 – 6 meses',2)">
+        <div class="option-icon">🕐</div>
+        <div class="option-text"><div class="option-label">3 – 6 meses</div><div class="option-sub">Dolor crónico en desarrollo</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(2,this,'6 – 12 meses',3)">
+        <div class="option-icon">📆</div>
+        <div class="option-text"><div class="option-label">6 – 12 meses</div><div class="option-sub">Crónico — candidato ideal</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(2,this,'Más de 1 año',3)">
+        <div class="option-icon">🗓️</div>
+        <div class="option-text"><div class="option-label">Más de 1 año</div><div class="option-sub">Dolor prolongado sin resolución</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      </div>
+      <button class="btn-next" onclick="handleBtn()" disabled id="btn-2">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="screen" id="screen-3">
+    <div class="q-card">
+      <div class="q-header">
+        <div class="q-title">¿Qué tratamientos has probado?</div>
+      <div class="q-hint">Selecciona todos los que apliquen</div>
+      </div>
+      <div class="options" id="opts-3">
+      <div class="option" onclick="selectMulti(3,this,'Reposo / hielo')">
+        <div class="option-icon">🧊</div>
+        <div class="option-text"><div class="option-label">Reposo / hielo</div><div class="option-sub">Manejo básico en casa</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(3,this,'Medicamentos')">
+        <div class="option-icon">💊</div>
+        <div class="option-text"><div class="option-label">Medicamentos</div><div class="option-sub">Antiinflamatorios, analgésicos</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(3,this,'Fisioterapia')">
+        <div class="option-icon">🏃</div>
+        <div class="option-text"><div class="option-label">Fisioterapia</div><div class="option-sub">Ejercicios y rehabilitación</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(3,this,'Quiropráctica')">
+        <div class="option-icon">🖐️</div>
+        <div class="option-text"><div class="option-label">Quiropráctica</div><div class="option-sub">Ajustes y manipulación</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(3,this,'Inyecciones de cortisona')">
+        <div class="option-icon">💉</div>
+        <div class="option-text"><div class="option-label">Inyecciones de cortisona</div><div class="option-sub">Tratamiento con corticosteroides</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(3,this,'Cirugía')">
+        <div class="option-icon">🏥</div>
+        <div class="option-text"><div class="option-label">Cirugía</div><div class="option-sub">Intervención quirúrgica previa</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(3,this,'Ninguno todavía')">
+        <div class="option-icon">🆕</div>
+        <div class="option-text"><div class="option-label">Ninguno todavía</div><div class="option-sub">Primera vez buscando ayuda</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      </div>
+      <button class="btn-next" onclick="handleBtn()" disabled id="btn-3">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="screen" id="screen-4">
+    <div class="q-card">
+      <div class="q-header">
+        <div class="q-title">¿Cuánto afecta el dolor tu vida diaria?</div>
+      </div>
+      <div class="options" id="opts-4">
+      <div class="option" onclick="selectSingle(4,this,'Leve',1)">
+        <div class="option-icon">😊</div>
+        <div class="option-text"><div class="option-label">Leve</div><div class="option-sub">Puedo hacer casi todo normalmente</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(4,this,'Moderado',2)">
+        <div class="option-icon">😐</div>
+        <div class="option-text"><div class="option-label">Moderado</div><div class="option-sub">Limita algunas actividades del día</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(4,this,'Significativo',3)">
+        <div class="option-icon">😟</div>
+        <div class="option-text"><div class="option-label">Significativo</div><div class="option-sub">Evito muchas actividades por el dolor</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(4,this,'Severo',3)">
+        <div class="option-icon">😣</div>
+        <div class="option-text"><div class="option-label">Severo</div><div class="option-sub">Afecta mi trabajo, sueño y vida diaria</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      </div>
+      <button class="btn-next" onclick="handleBtn()" disabled id="btn-4">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="screen" id="screen-5">
+    <div class="q-card">
+      <div class="q-header">
+        <div class="q-title">¿Cuál es tu nivel de actividad?</div>
+      </div>
+      <div class="options" id="opts-5">
+      <div class="option" onclick="selectSingle(5,this,'Sedentario',1)">
+        <div class="option-icon">🛋️</div>
+        <div class="option-text"><div class="option-label">Sedentario</div><div class="option-sub">Poca actividad física en el día</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(5,this,'Activo',2)">
+        <div class="option-icon">🚶</div>
+        <div class="option-text"><div class="option-label">Activo</div><div class="option-sub">Caminatas regulares, trabajo físico</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(5,this,'Deportista',3)">
+        <div class="option-icon">🏋️</div>
+        <div class="option-text"><div class="option-label">Deportista</div><div class="option-sub">Entreno regularmente en el gym o deporte</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(5,this,'Atleta',3)">
+        <div class="option-icon">🏅</div>
+        <div class="option-text"><div class="option-label">Atleta</div><div class="option-sub">Competición o rendimiento de alto nivel</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      </div>
+      <button class="btn-next" onclick="handleBtn()" disabled id="btn-5">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="screen" id="screen-6">
+    <div class="q-card">
+      <div class="q-header">
+        <div class="q-title">¿Te han sugerido cirugía?</div>
+      </div>
+      <div class="options" id="opts-6">
+      <div class="option" onclick="selectSingle(6,this,'No, aún no',1)">
+        <div class="option-icon">🙅</div>
+        <div class="option-text"><div class="option-label">No, aún no</div><div class="option-sub">No ha llegado a ese punto</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(6,this,'Me lo han mencionado',2)">
+        <div class="option-icon">💬</div>
+        <div class="option-text"><div class="option-label">Me lo han mencionado</div><div class="option-sub">Un médico lo ha sugerido como opción</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(6,this,'Quiero evitarla',3)">
+        <div class="option-icon">🚫</div>
+        <div class="option-text"><div class="option-label">Quiero evitarla</div><div class="option-sub">Busco activamente alternativas</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectSingle(6,this,'Ya tuve cirugía y sigo con dolor',3)">
+        <div class="option-icon">😔</div>
+        <div class="option-text"><div class="option-label">Ya tuve cirugía y sigo con dolor</div><div class="option-sub">La cirugía no resolvió el problema</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      </div>
+      <button class="btn-next" onclick="handleBtn()" disabled id="btn-6">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="screen" id="screen-7">
+    <div class="q-card">
+      <div class="q-header">
+        <div class="q-title">¿Cuál es tu objetivo principal?</div>
+      <div class="q-hint">Selecciona todos los que apliquen</div>
+      </div>
+      <div class="options" id="opts-7">
+      <div class="option" onclick="selectMulti(7,this,'Moverme sin dolor')">
+        <div class="option-icon">🏃</div>
+        <div class="option-text"><div class="option-label">Moverme sin dolor</div><div class="option-sub">Recuperar mi movilidad y calidad de vida</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(7,this,'Dejar los medicamentos')">
+        <div class="option-icon">🚫</div>
+        <div class="option-text"><div class="option-label">Dejar los medicamentos</div><div class="option-sub">No depender de pastillas para el dolor</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(7,this,'Evitar la cirugía')">
+        <div class="option-icon">🛡️</div>
+        <div class="option-text"><div class="option-label">Evitar la cirugía</div><div class="option-sub">Buscar opciones no quirúrgicas</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      <div class="option" onclick="selectMulti(7,this,'Entender mis opciones')">
+        <div class="option-icon">🔍</div>
+        <div class="option-text"><div class="option-label">Entender mis opciones</div><div class="option-sub">Conocer qué tratamientos existen</div></div>
+        <div class="option-check-indicator"></div>
+      </div>
+      </div>
+      <button class="btn-next" onclick="handleBtn()" disabled id="btn-7">Ver mis resultados →</button>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="screen" id="screen-contact">
+    <div class="q-card">
+      <div class="contact-title">Ya casi terminamos</div>
+      <div class="contact-sub">Ingresa tus datos para ver tu evaluación personalizada. Tu información es privada.</div>
+      <div class="field-stack">
+        <div class="field-row">
+          <div class="field-wrap">
+            <div class="field-label">Nombre</div>
+            <input type="text" id="f-first" placeholder="María" autocomplete="given-name" />
+          </div>
+          <div class="field-wrap">
+            <div class="field-label">Apellido</div>
+            <input type="text" id="f-last" placeholder="García" autocomplete="family-name" />
+          </div>
+        </div>
+        <div class="field-wrap">
+          <div class="field-label">Teléfono</div>
+          <input type="tel" id="f-phone" placeholder="(817) 555-0000" autocomplete="tel" />
+        </div>
+        <div class="field-wrap">
+          <div class="field-label">Correo electrónico</div>
+          <input type="email" id="f-email" placeholder="maria@correo.com" autocomplete="email" />
+        </div>
+      </div>
+      <button class="btn-next gold" onclick="submitContact()">Ver mi evaluación →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="screen-results">
+    <div class="q-card" style="margin-bottom:20px">
+      <div id="resultBadge" class="result-badge"></div>
+      <div class="result-title" id="resultTitle"></div>
+      <div class="result-body" id="resultBody"></div>
+      <div class="score-row">
+        <div class="score-label-row"><span>Puntuación de compatibilidad</span><span id="scoreVal"></span></div>
+        <div class="score-track"><div class="score-fill" id="scoreFill"></div></div>
+      </div>
+      <div class="indicators" id="resultIndicators"></div>
+    </div>
+    <div class="section-divider">
+      <div class="divider-line"></div>
+      <div class="divider-text">Reserva tu cita</div>
+      <div class="divider-line"></div>
+    </div>
+    <div class="cal-card">
+      <div class="cal-header">
+        <div class="cal-eyebrow">Paso final</div>
+        <div class="cal-title">Visita de Descubrimiento con el Dr. Rudy</div>
+        <div class="cal-sub">Solo $47 · Sin compromiso · Colleyville, TX</div>
+      </div>
+      <div class="cal-iframe">
+        <iframe src="https://api.leadconnectorhq.com/widget/booking/t56udA42FxbQ2bA0tOS1" scrolling="yes"></iframe>
+      </div>
+    </div>
+    <div class="footer-note">
+      CVC Spine &amp; Sport · 1001 Glade Rd Suite 120, Colleyville TX 76034<br>
+      Tu información está protegida. Nunca compartimos tus datos.
+    </div>
+  </div>
+
+</div>
+
+<script>
+const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/BXlSfFzylpA84GnF6GGR/webhook-trigger/77e7503d-996a-41e3-86c9-c0928041';
+const TOTAL = 7;
+const SCREENS = ['hero',1,2,3,4,5,6,7,'contact','results'];
+let currentIdx = 0;
+let answers = {}, scores = {}, multiVals = {};
+
+// Build pills
+const pillRow = document.getElementById('pillRow');
+for (let i = 0; i < TOTAL; i++) {
+  const p = document.createElement('div');
+  p.className = 'pill'; p.id = 'pill-'+(i+1);
+  pillRow.appendChild(p);
+}
+
+function updateUI() {
+  const screenId = SCREENS[currentIdx];
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+screenId).classList.add('active');
+  const pt = document.getElementById('progressTrack');
+  const pl = document.getElementById('progressLabel');
+
+  if (screenId === 'hero' || screenId === 'contact' || screenId === 'results') {
+    pt.style.display = 'none';
+  } else {
+    pt.style.display = 'block';
+    const qNum = parseInt(screenId);
+    pl.textContent = 'Pregunta ' + qNum + ' / ' + TOTAL;
+    for (let i = 1; i <= TOTAL; i++) {
+      document.getElementById('pill-'+i).className = 'pill'+(i<qNum?' done':i===qNum?' active':'');
+    }
+    const btn = document.getElementById('btn-'+qNum);
+    if (btn) {
+      const hasAnswer = multiVals[qNum] ? multiVals[qNum].length > 0 : answers['q'+qNum] !== undefined;
+      btn.disabled = !hasAnswer;
+    }
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function handleBtn() {
+  currentIdx++;
+  updateUI();
+}
+
+function goBack() {
+  if (currentIdx > 0) { currentIdx--; updateUI(); }
+}
+
+function selectSingle(q, el, val, score) {
+  document.querySelectorAll('#opts-'+q+' .option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  answers['q'+q] = val; scores['q'+q] = score;
+  const btn = document.getElementById('btn-'+q);
+  if (btn) btn.disabled = false;
+}
+
+function selectMulti(q, el, val) {
+  el.classList.toggle('selected');
+  if (!multiVals[q]) multiVals[q] = [];
+  if (el.classList.contains('selected')) multiVals[q].push(val);
+  else multiVals[q] = multiVals[q].filter(v => v !== val);
+  answers['q'+q] = multiVals[q].join(', ');
+  scores['q'+q] = Math.min(multiVals[q].length, 3);
+  const btn = document.getElementById('btn-'+q);
+  if (btn) btn.disabled = multiVals[q].length === 0;
+}
+
+function calcScore() {
+  return Math.round((Object.values(scores).reduce((a,b)=>a+b,0) / (TOTAL*3)) * 100);
+}
+
+function submitContact() {
+  const first = document.getElementById('f-first').value.trim();
+  const last  = document.getElementById('f-last').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  if (!first || !phone || !email) { alert('Por favor completa nombre, teléfono y correo.'); return; }
+  const pct = calcScore();
+  const leadType = pct >= 65 ? 'Candidato Fuerte' : pct >= 40 ? 'Candidato Potencial' : 'Evaluación Necesaria';
+  fetch(WEBHOOK, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      first_name:first, last_name:last, phone:phone.replace(/\D/g,''), email,
+      quiz_score_pct:pct, lead_type:leadType,
+      pain_location:answers.q1||'', pain_duration:answers.q2||'',
+      prior_treatment:answers.q3||'', activity_impact:answers.q4||'',
+      activity_level:answers.q5||'', surgery_risk:answers.q6||'',
+      patient_goal:answers.q7||'', source:'shockwave-quiz-es', language:'es'
+    })
+  }).catch(e=>console.warn('Webhook:',e));
+  showResults(pct);
+}
+
+function showResults(pct) {
+  let badge, badgeClass, title, body, indicators;
+  if (pct >= 65) {
+    badge='✦ Candidato Fuerte'; badgeClass='badge-strong'; title='Las ondas de choque pueden ser tu solución';
+    body="Según tus respuestas, presentas el perfil ideal \u2014 dolor crónico de tejidos blandos con historial de tratamientos sin resultados duraderos. Este tratamiento tiene una alta tasa de éxito para casos como el tuyo."; indicators=['Perfil clínico compatible con el tratamiento','Sin agujas, sin cirugía, sin recuperación','Alta tasa de éxito en dolor crónico musculoesquelético','Visita de descubrimiento por solo $47'];
+  } else if (pct >= 40) {
+    badge='\u25c6 Candidato Potencial'; badgeClass='badge-potential'; title="Podrías beneficiarte de este tratamiento";
+    body="Tu perfil muestra características que responden bien a las ondas de choque. Una evaluación presencial nos permitirá confirmar si eres candidato y diseñar el plan correcto."; indicators=['Evaluación personalizada con el Dr. Rudy','Múltiples opciones clínicas disponibles','Plan adaptado a tus necesidades','Sin compromiso \u2014 solo una conversación honesta'];
+  } else {
+    badge='\u25cb Evaluación Recomendada'; badgeClass='badge-talk'; title="Queremos conocer tu caso en persona";
+    body="Contamos con múltiples tratamientos para el dolor crónico. Una evaluación nos permitirá encontrar el camino correcto para ti."; indicators=['Evaluación completa de nuevo paciente','Múltiples opciones de tratamiento','Plan personalizado según tus objetivos','Sin compromiso'];
+  }
+  document.getElementById('resultBadge').textContent = badge;
+  document.getElementById('resultBadge').className = 'result-badge '+badgeClass;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultBody').textContent = body;
+  document.getElementById('scoreVal').textContent = pct+'%';
+  document.getElementById('resultIndicators').innerHTML = indicators.map(i=>
+    `<div class="ind-row"><div class="ind-dot">✓</div><div class="ind-text">${i}</div></div>`
+  ).join('');
+  currentIdx = SCREENS.indexOf('results');
+  updateUI();
+  setTimeout(()=>{ document.getElementById('scoreFill').style.width = pct+'%'; }, 400);
+}
+
+updateUI();
+</script>
+</body>
+</html>
