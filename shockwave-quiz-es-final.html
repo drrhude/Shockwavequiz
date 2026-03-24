@@ -5,23 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>¿Es la Terapia de Ondas de Choque para Ti? — CVC Spine</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '514303165006418');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=514303165006418&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -643,7 +626,7 @@ src="https://www.facebook.com/tr?id=514303165006418&ev=PageView&noscript=1"
 </div>
 
 <script>
-const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/BXlSfFzyIpA84GnF6GGR/webhook-trigger/8IhMSXbYEFTZBGiANztM';
+const WEBHOOK = 'https://services.leadconnectorhq.com/hooks/BXlSfFzylpA84GnF6GGR/webhook-trigger/77e7503d-996a-41e3-86c9-c0928041';
 const TOTAL = 7;
 const SCREENS = ['hero',1,2,3,4,5,6,7,'contact','results'];
 let currentIdx = 0;
@@ -705,7 +688,9 @@ function selectMulti(q, el, val) {
   if (el.classList.contains('selected')) multiVals[q].push(val);
   else multiVals[q] = multiVals[q].filter(v => v !== val);
   answers['q'+q] = multiVals[q].join(', ');
-  scores['q'+q] = Math.min(multiVals[q].length, 3);
+  // Q1 (pain location) and Q7 (goals): flat 3 if anything selected — specificity is not penalized
+  // Q3 (prior treatments): count-based — more failed treatments = stronger candidate
+  scores['q'+q] = (q === 1 || q === 7) ? (multiVals[q].length > 0 ? 3 : 0) : Math.min(multiVals[q].length, 3);
   const btn = document.getElementById('btn-'+q);
   if (btn) btn.disabled = multiVals[q].length === 0;
 }
@@ -733,21 +718,20 @@ function submitContact() {
       patient_goal:answers.q7||'', source:'shockwave-quiz-es', language:'es'
     })
   }).catch(e=>console.warn('Webhook:',e));
-  fbq('track', 'Lead', {currency: 'USD', value: 47.00});
   showResults(pct);
 }
 
 function showResults(pct) {
   let badge, badgeClass, title, body, indicators;
-  if (pct >= 65) {
-    badge='✦ Candidato Fuerte'; badgeClass='badge-strong'; title='Las ondas de choque pueden ser tu solución';
-    body="Según tus respuestas, presentas el perfil ideal \u2014 dolor crónico de tejidos blandos con historial de tratamientos sin resultados duraderos. Este tratamiento tiene una alta tasa de éxito para casos como el tuyo."; indicators=['Perfil clínico compatible con el tratamiento','Sin agujas, sin cirugía, sin recuperación','Alta tasa de éxito en dolor crónico musculoesquelético','Visita de descubrimiento por solo $47'];
-  } else if (pct >= 40) {
-    badge='\u25c6 Candidato Potencial'; badgeClass='badge-potential'; title="Podrías beneficiarte de este tratamiento";
-    body="Tu perfil muestra características que responden bien a las ondas de choque. Una evaluación presencial nos permitirá confirmar si eres candidato y diseñar el plan correcto."; indicators=['Evaluación personalizada con el Dr. Rudy','Múltiples opciones clínicas disponibles','Plan adaptado a tus necesidades','Sin compromiso \u2014 solo una conversación honesta'];
+  if (pct >= 55) {
+    badge='✦ Candidato Fuerte'; badgeClass='badge-strong'; title='Eres un candidato ideal para la terapia de ondas de choque';
+    body="Excelentes noticias \u2014 según tus respuestas, eres un candidato ideal para la terapia de ondas de choque. Tu perfil coincide exactamente con el tipo de dolor crónico que este tratamiento está diseñado para resolver."; indicators=['Perfil clínico compatible con el tratamiento','Sin agujas, sin cirugía, sin recuperación','Alta tasa de éxito en dolor crónico musculoesquelético','Visita de descubrimiento por solo $47'];
+  } else if (pct >= 35) {
+    badge='\u25c6 Candidato Potencial'; badgeClass='badge-potential'; title="Las ondas de choque lucen prometedoras para tu caso";
+    body="Tus respuestas sugieren que la terapia de ondas de choque puede ser una excelente opción para ti. Una evaluación rápida con el Dr. Rudy lo confirmará y te pondrá en el camino correcto."; indicators=['Evaluación personalizada con el Dr. Rudy','Múltiples opciones clínicas disponibles','Plan adaptado a tus necesidades','Sin compromiso \u2014 solo una conversación honesta'];
   } else {
-    badge='\u25cb Evaluación Recomendada'; badgeClass='badge-talk'; title="Queremos conocer tu caso en persona";
-    body="Contamos con múltiples tratamientos para el dolor crónico. Una evaluación nos permitirá encontrar el camino correcto para ti."; indicators=['Evaluación completa de nuevo paciente','Múltiples opciones de tratamiento','Plan personalizado según tus objetivos','Sin compromiso'];
+    badge='\u25cb Evaluación Recomendada'; badgeClass='badge-talk'; title="Tenemos una solución para tu dolor";
+    body="Cada caso de dolor es único. Nuestra evaluación identificará exactamente lo que tu cuerpo necesita \u2014 ya sea ondas de choque u otro tratamiento dirigido. El alivio es el objetivo."; indicators=['Evaluación completa de nuevo paciente','Múltiples opciones de tratamiento','Plan personalizado según tus objetivos','Sin compromiso'];
   }
   document.getElementById('resultBadge').textContent = badge;
   document.getElementById('resultBadge').className = 'result-badge '+badgeClass;
