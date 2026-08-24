@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación de Síntomas Nerviosos | Colleyville Chiropractic</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Sora:wght@400;500;600;700&display=swap');
+
+:root{
+  --bark:#2B2420;
+  --loam:#4A3B32;
+  --olive:#6E7350;
+  --brass:#B8945F;
+  --bone:#F5F0E6;
+  --olive-soft:#DDE0CC;
+  --brass-soft:#EEDFC4;
+  --danger-soft:#E8D3C4;
+  --rust:#A65F3E;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bone);
+  color:var(--bark);
+  font-family:'Sora',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:640px;
+  margin:0 auto;
+  padding:32px 20px 60px;
+}
+header.top{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:28px;
+}
+.mono{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--olive);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--bone);font-family:'Fraunces',serif;font-weight:700;font-size:16px;
+  flex:none;
+}
+.brand-name{font-size:13px;letter-spacing:.04em;color:var(--loam);text-transform:uppercase;}
+.brand-sub{font-size:11px;color:var(--olive);letter-spacing:.03em;}
+
+h1.headline{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:clamp(28px,6vw,38px);
+  line-height:1.08;
+  margin:0 0 10px;
+  color:var(--bark);
+}
+p.sub{
+  font-size:15.5px;
+  line-height:1.5;
+  color:var(--loam);
+  margin:0 0 28px;
+  max-width:52ch;
+}
+
+/* Nerve pathway progress */
+.nerve-track{
+  position:relative;
+  height:46px;
+  margin-bottom:30px;
+}
+.nerve-track svg{width:100%;height:100%;display:block;}
+.nerve-base{fill:none;stroke:var(--olive-soft);stroke-width:3;}
+.nerve-fill{fill:none;stroke:var(--brass);stroke-width:3;stroke-linecap:round;transition:stroke-dasharray .5s ease;}
+.nerve-node{fill:var(--bone);stroke:var(--olive-soft);stroke-width:2.5;transition:all .35s ease;}
+.nerve-node.active{fill:var(--brass);stroke:var(--brass);}
+.pulse{
+  fill:var(--rust);
+  opacity:0;
+}
+.pulse.firing{
+  animation:pulseGlow .55s ease-out;
+}
+@keyframes pulseGlow{
+  0%{opacity:0;r:3;}
+  40%{opacity:1;r:7;}
+  100%{opacity:0;r:10;}
+}
+.q-count{
+  font-size:12px;
+  color:var(--olive);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  margin-bottom:6px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--olive-soft);
+  border-radius:14px;
+  padding:26px 24px;
+}
+.q-text{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:20px;
+  line-height:1.3;
+  margin:0 0 20px;
+  color:var(--bark);
+}
+.options{display:flex;flex-direction:column;gap:10px;}
+.opt{
+  text-align:left;
+  border:1.5px solid var(--olive-soft);
+  background:var(--bone);
+  border-radius:10px;
+  padding:14px 16px;
+  font-family:'Sora',sans-serif;
+  font-size:15px;
+  color:var(--bark);
+  cursor:pointer;
+  transition:border-color .15s ease, background .15s ease, transform .1s ease;
+}
+.opt:hover{border-color:var(--brass); background:var(--brass-soft);}
+.opt:active{transform:scale(.99);}
+.opt:focus-visible{outline:2px solid var(--olive); outline-offset:2px;}
+
+.nav-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:22px;
+}
+.back-btn{
+  background:none;border:none;color:var(--loam);font-size:14px;cursor:pointer;
+  font-family:'Sora',sans-serif; padding:6px 0;
+}
+.back-btn:disabled{opacity:0;pointer-events:none;}
+
+/* Results */
+.result{display:none;}
+.result.show{display:block;}
+.tier-pill{
+  display:inline-block;
+  padding:6px 14px;
+  border-radius:100px;
+  font-size:12.5px;
+  font-weight:600;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
+.tier-low{background:var(--olive-soft); color:var(--loam);}
+.tier-moderate{background:var(--brass-soft); color:var(--loam);}
+.tier-high{background:var(--danger-soft); color:var(--rust);}
+
+.result h2{
+  font-family:'Fraunces',serif;
+  font-size:26px;
+  font-weight:600;
+  margin:0 0 12px;
+  line-height:1.2;
+}
+.result p{
+  font-size:15px;
+  line-height:1.6;
+  color:var(--loam);
+  margin:0 0 16px;
+}
+.result ul{margin:0 0 20px; padding-left:20px; color:var(--loam); font-size:14.5px; line-height:1.7;}
+
+.cta-box{
+  background:var(--bark);
+  border-radius:14px;
+  padding:24px;
+  color:var(--bone);
+  margin-top:22px;
+}
+.cta-box h3{
+  font-family:'Fraunces',serif;
+  font-size:19px;
+  margin:0 0 8px;
+  color:var(--bone);
+}
+.cta-box p{color:var(--olive-soft); font-size:14px; margin:0 0 18px;}
+.cta-btn{
+  display:block;
+  width:100%;
+  text-align:center;
+  background:var(--brass);
+  color:var(--bark);
+  font-weight:700;
+  font-size:15.5px;
+  text-decoration:none;
+  padding:15px 18px;
+  border-radius:10px;
+  margin-bottom:10px;
+  font-family:'Sora',sans-serif;
+}
+.cta-btn.secondary{
+  background:transparent;
+  border:1.5px solid var(--olive-soft);
+  color:var(--bone);
+  margin-bottom:0;
+}
+.disclaimer{
+  font-size:12px;
+  color:var(--olive);
+  margin-top:22px;
+  line-height:1.5;
+}
+.restart{
+  background:none;border:none;color:var(--loam);font-size:13px;
+  text-decoration:underline; cursor:pointer; margin-top:14px; font-family:'Sora',sans-serif;
+  padding:0;
+}
+.lead-input{
+  display:block;
+  width:100%;
+  border:1.5px solid var(--olive-soft);
+  background:var(--bone);
+  border-radius:10px;
+  padding:14px 16px;
+  font-family:'Sora',sans-serif;
+  font-size:15px;
+  color:var(--bark);
+  margin-bottom:12px;
+}
+.lead-input:focus{outline:2px solid var(--olive); outline-offset:1px; border-color:var(--brass);}
+.submit-btn:disabled{opacity:.6; pointer-events:none;}
+@media (prefers-reduced-motion: reduce){
+  .pulse.firing{animation:none;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="mono">CC</div>
+    <div>
+      <div class="brand-name">Colleyville Chiropractic</div>
+      <div class="brand-sub">CVC Spine &amp; Sport · NeuroPath</div>
+    </div>
+  </header>
+
+  <div id="intro-screen">
+    <h1 class="headline">¿El dolor nervioso está controlando tu día en silencio?</h1>
+    <p class="sub">Responde 8 preguntas rápidas sobre entumecimiento, hormigueo o ardor en tus pies y manos. Toma alrededor de un minuto — al final recibirás un resumen personalizado de tu salud nerviosa.</p>
+    <div class="card">
+      <p style="margin:0 0 20px; font-size:14.5px; color:var(--loam);">No necesitas crear una cuenta. Tus respuestas solo se usan para preparar tu resultado.</p>
+      <button class="opt" style="border-color:var(--brass); background:var(--brass); color:var(--bark); font-weight:700; text-align:center;" onclick="startQuiz()">Comenzar la evaluación →</button>
+    </div>
+  </div>
+
+  <div id="quiz-screen" style="display:none;">
+    <div class="q-count" id="q-count">Pregunta 1 de 8</div>
+    <div class="nerve-track">
+      <svg viewBox="0 0 600 46" preserveAspectRatio="none">
+        <path class="nerve-base" d="M10,23 L590,23"/>
+        <path class="nerve-fill" id="nerveFill" d="M10,23 L10,23"/>
+        <g id="nodes"></g>
+      </svg>
+    </div>
+    <div class="card">
+      <p class="q-text" id="q-text"></p>
+      <div class="options" id="q-options"></div>
+      <div class="nav-row">
+        <button class="back-btn" id="back-btn" onclick="goBack()">← Atrás</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="contact-screen" style="display:none;">
+    <div class="card">
+      <p class="q-text" style="margin-bottom:6px;">Tu resumen de salud nerviosa está listo.</p>
+      <p style="font-size:14.5px; color:var(--loam); margin:0 0 20px;">Ingresa tus datos para que podamos enviarte tus resultados personalizados y comunicarnos contigo si deseas hablar con el Dr. Rudy.</p>
+      <form id="lead-form" onsubmit="submitLead(event)">
+        <input required type="text" id="lead-name" placeholder="Nombre completo" class="lead-input">
+        <input required type="tel" id="lead-phone" placeholder="Número de teléfono" class="lead-input">
+        <input required type="email" id="lead-email" placeholder="Correo electrónico" class="lead-input">
+        <button type="submit" class="opt" id="submit-btn" style="border-color:var(--brass); background:var(--brass); color:var(--bark); font-weight:700; text-align:center; margin-top:6px;">Ver mis resultados →</button>
+      </form>
+      <p style="font-size:11.5px; color:var(--olive); margin-top:14px;">Respetamos tu privacidad. Tu información solo se usa para compartir tus resultados y hablar sobre tu cuidado.</p>
+    </div>
+  </div>
+
+  <div id="result-screen" class="result"></div>
+
+</div>
+
+<script>
+// PASTE YOUR GHL INBOUND WEBHOOK URL BELOW (from Automation > Workflows > Inbound Webhook trigger)
+const WEBHOOK_URL = "PASTE_YOUR_GHL_WEBHOOK_URL_HERE";
+
+const questions = [
+  {
+    text: "¿Sientes entumecimiento, hormigueo o una sensación de 'agujas' en tus pies o manos?",
+    options: [
+      {label:"No, nunca", score:0},
+      {label:"De vez en cuando", score:1},
+      {label:"La mayoría de los días", score:2},
+      {label:"Constantemente", score:3},
+    ]
+  },
+  {
+    text: "¿Desde hace cuánto tiempo notas estas sensaciones?",
+    options: [
+      {label:"Menos de 3 meses", score:0},
+      {label:"3–12 meses", score:1},
+      {label:"1–3 años", score:2},
+      {label:"Más de 3 años", score:3},
+    ]
+  },
+  {
+    text: "¿Sientes ardor, punzadas o descargas eléctricas en tus pies o manos?",
+    options: [
+      {label:"Nunca", score:0},
+      {label:"A veces", score:2},
+      {label:"Con frecuencia, especialmente en la noche", score:3},
+    ]
+  },
+  {
+    text: "¿Estas sensaciones afectan tu equilibrio o hacen que caminar se sienta inestable?",
+    options: [
+      {label:"Para nada", score:0},
+      {label:"Un poco, en superficies irregulares", score:2},
+      {label:"Sí, he estado a punto de caer o me he caído", score:3},
+    ]
+  },
+  {
+    text: "¿Tienes diabetes, prediabetes, o antecedentes familiares de alguna de las dos?",
+    options: [
+      {label:"No", score:0},
+      {label:"Prediabetes / antecedentes familiares", score:2},
+      {label:"Sí, diabetes diagnosticada", score:3},
+    ]
+  },
+  {
+    text: "¿Estos síntomas interrumpen tu sueño?",
+    options: [
+      {label:"Nunca", score:0},
+      {label:"Algunas noches al mes", score:1},
+      {label:"Varias noches a la semana", score:2},
+      {label:"Casi todas las noches", score:3},
+    ]
+  },
+  {
+    text: "¿Has probado medicamentos (como gabapentina o Lyrica) con poco o ningún alivio?",
+    options: [
+      {label:"No he probado medicamentos", score:1},
+      {label:"Los probé, con algo de alivio", score:1},
+      {label:"Los probé, con poco o ningún alivio", score:3},
+    ]
+  },
+  {
+    text: "¿Evitas actividades que antes disfrutabas — caminar, hacer jardinería, jugar con tus nietos — por estos síntomas?",
+    options: [
+      {label:"No", score:0},
+      {label:"A veces", score:2},
+      {label:"Sí, con frecuencia", score:3},
+    ]
+  },
+];
+
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+function startQuiz(){
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  buildNodes();
+  renderQuestion();
+}
+
+function buildNodes(){
+  const g = document.getElementById('nodes');
+  g.innerHTML = '';
+  const n = questions.length;
+  for(let i=0;i<n;i++){
+    const x = 10 + (580/(n-1))*i;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', 23);
+    circle.setAttribute('r', 5);
+    circle.setAttribute('class','nerve-node');
+    circle.setAttribute('id','node-'+i);
+    g.appendChild(circle);
+
+    const pulse = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    pulse.setAttribute('cx', x);
+    pulse.setAttribute('cy', 23);
+    pulse.setAttribute('r', 3);
+    pulse.setAttribute('class','pulse');
+    pulse.setAttribute('id','pulse-'+i);
+    g.appendChild(pulse);
+  }
+}
+
+function updateTrack(){
+  const n = questions.length;
+  const x = 10 + (580/(n-1))*current;
+  document.getElementById('nerveFill').setAttribute('d', `M10,23 L${x},23`);
+  for(let i=0;i<n;i++){
+    document.getElementById('node-'+i).classList.toggle('active', i <= current);
+  }
+}
+
+function fire(i){
+  const p = document.getElementById('pulse-'+i);
+  p.classList.remove('firing');
+  void p.offsetWidth;
+  p.classList.add('firing');
+}
+
+function renderQuestion(){
+  const q = questions[current];
+  document.getElementById('q-count').textContent = `Pregunta ${current+1} de ${questions.length}`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('back-btn').disabled = current === 0;
+  updateTrack();
+
+  const optWrap = document.getElementById('q-options');
+  optWrap.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.textContent = opt.label;
+    btn.onclick = () => selectAnswer(idx);
+    optWrap.appendChild(btn);
+  });
+}
+
+function selectAnswer(idx){
+  answers[current] = questions[current].options[idx].score;
+  fire(current);
+  setTimeout(()=>{
+    if(current < questions.length - 1){
+      current++;
+      renderQuestion();
+    } else {
+      showContactCapture();
+    }
+  }, 220);
+}
+
+function goBack(){
+  if(current > 0){
+    current--;
+    renderQuestion();
+  }
+}
+
+let pendingResult = null;
+
+function calculateResult(){
+  const total = answers.reduce((a,b)=>a+(b||0),0);
+  let tier, tierClass, heading, body, points;
+
+  if(total <= 7){
+    tier = "Señal baja";
+    tierClass = "tier-low";
+    heading = "Tus señales nerviosas se ven mayormente estables";
+    body = "Tus respuestas sugieren síntomas leves o en etapa temprana. Esa es una buena noticia — esta suele ser la etapa más fácil de atender antes de que la irritación nerviosa sea más difícil de revertir.";
+    points = [
+      "La irritación nerviosa en etapa temprana responde bien al cuidado conservador",
+      "Vale la pena descartar factores como la postura, el calzado o el nivel de azúcar en sangre",
+      "Una evaluación breve puede confirmar si conviene monitorear o iniciar tratamiento"
+    ];
+  } else if(total <= 14){
+    tier = "Señal moderada";
+    tierClass = "tier-moderate";
+    heading = "Tus síntomas merecen una revisión más de cerca";
+    body = "Estás describiendo un patrón que muchos pacientes presentan justo antes de que los síntomas empiecen a limitar sus actividades diarias. Atender la salud nerviosa ahora suele ser más efectivo que esperar.";
+    points = [
+      "Los síntomas en esta etapa a menudo aún responden al cuidado no quirúrgico",
+      "La interrupción del sueño y los cambios de equilibrio son señales de que los nervios están bajo estrés real",
+      "Un examen en persona puede identificar exactamente qué nervios están afectados"
+    ];
+  } else {
+    tier = "Señal alta";
+    tierClass = "tier-high";
+    heading = "Tus síntomas indican un estrés nervioso importante";
+    body = "Este patrón — ardor frecuente, interrupción del sueño y cambios de equilibrio — es consistente con una afectación nerviosa más avanzada. Te recomendamos una evaluación en persona pronto, en lugar de esperar.";
+    points = [
+      "Los síntomas nerviosos avanzados siguen siendo tratables, pero el tiempo importa",
+      "Una evaluación completa identifica qué nervios están involucrados y qué tan avanzado está",
+      "Nuestro programa NeuroPath está diseñado específicamente para esta etapa de afectación nerviosa"
+    ];
+  }
+
+  return {total, tier, tierClass, heading, body, points};
+}
+
+function showContactCapture(){
+  document.getElementById('quiz-screen').style.display = 'none';
+  pendingResult = calculateResult();
+  document.getElementById('contact-screen').style.display = 'block';
+}
+
+function submitLead(e){
+  e.preventDefault();
+  const submitBtn = document.getElementById('submit-btn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Enviando…";
+
+  const payload = {
+    name: document.getElementById('lead-name').value,
+    phone: document.getElementById('lead-phone').value,
+    email: document.getElementById('lead-email').value,
+    source: "Neuropathy FB Ad Quiz (ES)",
+    score: pendingResult.total,
+    tier: pendingResult.tier,
+    answers: answers,
+  };
+
+  fetch(WEBHOOK_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(payload),
+  }).catch(err => console.error("Webhook error:", err))
+    .finally(() => {
+      document.getElementById('contact-screen').style.display = 'none';
+      showResult(pendingResult);
+    });
+}
+
+function showResult(data){
+  const resultScreen = document.getElementById('result-screen');
+  resultScreen.classList.add('show');
+  resultScreen.innerHTML = `
+    <div id="tier-pill" class="tier-pill ${data.tierClass}">${data.tier}</div>
+    <h2>${data.heading}</h2>
+    <p>${data.body}</p>
+    <ul>${data.points.map(pt => `<li>${pt}</li>`).join('')}</ul>
+    <div class="cta-box">
+      <h3>Habla con el Dr. Rudy sobre tus resultados</h3>
+      <p>Revisaremos juntos tu resumen de salud nerviosa y veremos si nuestro programa NeuroPath es adecuado para ti — sin presión, sin compromiso.</p>
+      <a class="cta-btn" href="tel:8174207696">Llamar al (817) 420-7696</a>
+      <a class="cta-btn secondary" href="#" id="book-link">Agendar una Evaluación Nerviosa Gratuita</a>
+    </div>
+    <p class="disclaimer">Esta evaluación es educativa y no reemplaza un diagnóstico médico. Los síntomas nerviosos pueden tener muchas causas — una evaluación en persona es la única forma de saber qué está causando los tuyos.</p>
+    <button class="restart" onclick="restartQuiz()">Repetir la evaluación</button>
+  `;
+}
+
+function restartQuiz(){
+  current = 0;
+  answers = new Array(questions.length).fill(null);
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('result-screen').innerHTML = '';
+  document.getElementById('lead-form').reset();
+  document.getElementById('intro-screen').style.display = 'block';
+}
+</script>
+</body>
+</html>
