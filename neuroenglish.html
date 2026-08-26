@@ -517,7 +517,6 @@ function submitLead(e){
   fetch(WEBHOOK_URL, {
     method: "POST",
     mode: "no-cors",
-    headers: {"Content-Type": "application/json"},
     body: JSON.stringify(payload),
   }).catch(err => console.error("Webhook error:", err))
     .finally(() => {
