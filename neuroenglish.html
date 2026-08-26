@@ -506,17 +506,16 @@ function submitLead(e){
 
   const payload = {
     name: document.getElementById('lead-name').value,
-    phone: document.getElementById('lead-phone').value,
+    phone: document.getElementById('lead-phone').value.replace(/\D/g,''),
     email: document.getElementById('lead-email').value,
-    source: "Neuropathy FB Ad Quiz (EN)",
-    score: pendingResult.total,
-    tier: pendingResult.tier,
-    answers: answers,
+    source: "neuropathy-quiz-en",
+    quiz_score_pct: Math.round((pendingResult.total / 24) * 100),
+    lead_type: pendingResult.tier,
   };
 
   fetch(WEBHOOK_URL, {
     method: "POST",
-    mode: "no-cors",
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify(payload),
   }).catch(err => console.error("Webhook error:", err))
     .finally(() => {
