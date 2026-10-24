@@ -10,6 +10,18 @@
 <meta property="og:image" content="cvc-logo-olive.png">
 <meta name="theme-color" content="#141A16">
 <link rel="icon" href="cvc-mark-olive.png">
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','514303165006418');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=514303165006418&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -614,6 +626,7 @@ const ICON = {
 const CAL_URL = "https://api.leadconnectorhq.com/widget/booking/SFxcfLv32mHnEDA0K0BN";
 const Q = C.questions;
 const $ = id => document.getElementById(id);
+function px(){ try{ if(window.fbq) fbq.apply(null, arguments); }catch(e){} }
 
 /* ============ STATE ============ */
 let idx = 0;
@@ -728,6 +741,7 @@ function val(key){ const q=Q.find(x=>x.key===key); const s=ans[key]||[]; return 
 
 /* ============ ANALYZE ============ */
 function analyze(){
+  px('trackCustom','QuizComplete',{quiz:'neuropathy',language:C.lang});
   $('progFill').style.width='100%';
   show('s-anl');
   const items = $('anlList').querySelectorAll('li');
@@ -784,6 +798,7 @@ $('leadForm').addEventListener('submit', e=>{
     page_url: location.href.split('?')[0]
   };
 
+  px('track','Lead',{content_name:'NeuroPath Quiz',content_category:C.tiers[tier].lead,language:C.lang});
   fetch(C.webhook, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)})
     .catch(err=>console.warn('Webhook:', err))
     .finally(()=>showResults(pct, tier, first));
@@ -819,9 +834,12 @@ const io = new IntersectionObserver(es=>es.forEach(e=>$('sticky').classList.togg
 io.observe($('bookCard'));
 $('stickyBook').addEventListener('click', ()=>$('bookCard').scrollIntoView({behavior:'smooth', block:'start'}));
 
+document.querySelectorAll('[data-call]').forEach(a=>a.addEventListener('click',()=>px('track','Contact',{method:'call'})));
+$('smsBtn').addEventListener('click',()=>px('track','Contact',{method:'sms'}));
+
 /* ============ BOOT ============ */
 fillStatic();
-$('startBtn').addEventListener('click', ()=>{ idx=0; show('s-q'); renderQ(); });
+$('startBtn').addEventListener('click', ()=>{ idx=0; show('s-q'); renderQ(); px('trackCustom','QuizStart',{quiz:'neuropathy',language:C.lang}); });
 $('backBtn').addEventListener('click', back);
 $('restartBtn').addEventListener('click', ()=>{
   Object.keys(ans).forEach(k=>delete ans[k]); idx=0;
